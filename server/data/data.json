@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Sac à main",
+    "description": "Confortables et stylées pour le sport ou la ville.",
+    "price": 45000,
+    "image": "https://img.freepik.com/photos-gratuite/sac-main-vert-belle-elegance-mode-luxe_74190-4885.jpg?uid=R193012627&ga=GA1.1.527807352.1741390038&semt=ais_country_boost&w=740",
+    "category": "Chaussures"
+  },
+    {
+      "name": "Sac à main",
+      "description": "Confortables et stylées pour le sport ou la ville.",
+      "price": 45000,
+      "image": "https://img.freepik.com/photos-gratuite/petit-sac-main.jpg",
+      "category": "Chaussures"
+    },
+    {
+      "name": "Montre connectée",
+      "description": "Suivi santé et notifications sur votre poignet.",
+      "price": 75000,
+      "image": "https://example.com/montre.jpg",
+      "category": "Accessoires"
+    }
+  ]
+  

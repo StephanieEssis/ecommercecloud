@@ -1,12 +1,18 @@
 import React from 'react';
-// import ProductList from '../ProductList/ProductList';  // Ajustez le chemin selon l'emplacement réel du fichier
 
 const Home = () => {
     return (
-        <div className="text-3xl text-blue-700 text-center my-8">
-        <img src="./assets/back.jpg" alt="" className="w-full h-full"/>
-        <h1><strong>Bienvenue sur notre application E-shop</strong></h1>
-            {/* <ProductList /> */}
+        <div className="relative w-full min-h-screen">
+            <img
+                src="./assets/bg1.avif"
+                alt="background"
+                className="w-full h-full object-cover absolute top-0 left-0 z-0"
+            />
+            <div className="relative z-10 flex items-center justify-center min-h-screen bg-black bg-opacity-50">
+                <h1 className="text-4xl font-bold text-white text-center">
+                    Bienvenue sur notre application E-shop
+                </h1>
+            </div>
         </div>
     );
 };

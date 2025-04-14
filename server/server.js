@@ -1,33 +1,62 @@
-require('dotenv').config(); // <-- le tout premier !
+require('dotenv').config(); //  Chargement des variables d'environnement
+
 const express = require('express');
+const cors = require('cors');
+const product = require('./models/product.js');
 const paymentRoutes = require('./routes/paymentRoutes');
-const mongoose = require('mongoose');
+const sampleProducts = require('./data/data.json');
+const connectDB = require('./dbconnection/mongodbconnexion.js'); // ✅ Connexion MongoDB refactorisée
+
 const app = express();
 
-
-// Vérification que la clé Stripe est bien chargée
-
+// 
+//✅ Vérifie que la clé Stripe est bien présente
 if (!process.env.STRIPE_SECRET_KEY) {
-    console.error("Erreur: la clé Stripe est absente de votre fichier .env.");
-    process.exit(1); // Arrêter le serveur si la clé est manquante
+    console.error("❌ Erreur: la clé Stripe est absente de votre fichier .env.");
+    process.exit(1);
 }
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+console.log("✅ Stripe Secret Key détectée");
 
-console.log("Stripe Secret Key:", process.env.STRIPE_SECRET_KEY);  // Devrait afficher ta clé
-// Middleware pour parser le body en JSON
-app.use(express.json());
+// ✅ Middleware
+app.use(cors());
 
-// Route pour gérer le paiement
+// ✅ Routes
 app.use('/api/payment', paymentRoutes);
 
-// Connexion à MongoDB
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.log(err));
+// ✅ Route pour récupérer les produits
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await product.find({});
+        res.json(products);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
-// Démarrer le serveur
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// ✅ Fonction de seed des produits
+const seedProducts = async () => {
+    try {
+        for (let p of sampleProducts) {
+            await product.updateOne(
+                { name: p.name }, // critère : même nom
+                { $set: p },      // mise à jour
+                { upsert: true }  // ajoute si inexistant
+            );
+            console.log(`✅ Produit synchronisé : ${p.name}`);
+        }
+        console.log('📦 Produits synchronisés avec data.json');
+    } catch (error) {
+        console.error('❌ Erreur lors de la synchronisation des produits :', error.message);
+    }
+};
+
+// ✅ Connexion à MongoDB puis lancement du serveur
+connectDB().then(() => {
+    seedProducts(); // On seed une fois la connexion établie
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on port ${PORT}`);
+    });
 });

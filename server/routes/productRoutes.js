@@ -1,12 +1,12 @@
 const express = require('express');
-const Product = require('../models/Products');
-const router = express.Router();n
+const product = require('./models/product');
+const router = express.Router();
 
 // Créer un produit
 router.post('/', async (req, res) => {
     try {
-        const { name, description, price, image } = req.body;
-        const product = new Product({ name, description, price, image });
+        const { name, description, price, image, category } = req.body;
+        const product = new product({ name, description, price, image, category });  // Assure-toi que le modèle Product inclut le champ 'category'
         await product.save();
         res.status(201).json(product);
     } catch (err) {
@@ -14,10 +14,20 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Récupérer tous les produits
+// Récupérer tous les produits ou filtrer par catégorie
 router.get('/', async (req, res) => {
+    const category = req.query.category;  // Récupérer la catégorie de la requête (si elle existe)
+    
     try {
-        const products = await Product.find();
+        let products;
+        if (category) {
+            // Si une catégorie est fournie, filtre les produits par catégorie
+            products = await Product.find({ category: category });
+        } else {
+            // Si aucune catégorie n'est donnée, retourne tous les produits
+            products = await Product.find();
+        }
+
         res.json(products);
     } catch (err) {
         res.status(500).json({ message: 'Error fetching products' });
